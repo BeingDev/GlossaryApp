@@ -44,5 +44,21 @@ namespace GlossaryApp.Print
                 return ConfigurationManager.AppSettings["PrintFilePath"];
             }
         }
+
+        public static string GlossaryPrintFileName
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["GlossaryPrintFileName"];
+            }
+        }
+
+        public static string AcronymPrintFileName
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["AcronymPrintFileName"];
+            }
+        }
     }
 }
