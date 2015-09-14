@@ -141,7 +141,7 @@ namespace GlossaryApp.Print
         static string BuildGlossaryString()
         {
             //var ss = @"<div class='card'><div class='card-content row'><div class='col-md-9' style='max-width: 700px;min-width: 700px;'><h4 class='media-heading'><span class='card-title'>{0}</span></h4><span>{1}</span></div><div class='media-right col-md-2'><div class='thumbnail' style='max-width: 200px;min-width: 200px;'><img style='width: 186px;' class='img-thumbnail' src='images/{2}' alt='{3}' /><small>{4}</small></div></div></div></div>";
-            var ss = @"<div class='card'><div class='card-content row'><table style='width:100%'><tr><td style='width:80%'><div style='padding-left:15px;padding-right:10px;'><h4 class='media-heading'><span class='card-title'>{0}</span></h4><span>{1}</span></div></td><td align='right' style='width:20%'><div class='thumbnail' style='float:right;text-align:left;max-width: 200px;min-width: 200px;'><img style='width: 186px;' class='img-thumbnail' src='images/{2}' alt='{3}' /><small>{4}</small></div></td></tr></table></div></div>";
+            var ss = @"<div class='card'><div class='card-content row'><table style='width:100%'><tr><td style='width:80%;vertical-align: top;' ><div style='padding-left:15px;padding-right:10px;'><h4 class='media-heading'><span class='card-title'>{0}</span></h4><span>{1}</span></div></td><td align='right' style='width:20%'><div class='thumbnail' style='float:right;text-align:left;max-width: 200px;min-width: 200px;'><img style='width: 186px;' class='img-thumbnail' src='images/{2}' alt='{3}' /><small>{4}</small></div></td></tr></table></div></div>";
             var ssWithOutImage = @"<div class='card'><div class='card-content row'><div class='col-md-10'><h4 class='media-heading'><span class='card-title'>{0}</span></h4><span>{1}</span></div><div class='media-right col-md-2'></div></div></div>";
             var currentChar = string.Empty;
             var output = glossaryList.Aggregate(new StringBuilder("<h3>Glossary of Terminology</h3><hr/>"), (a, b) =>
@@ -155,12 +155,14 @@ namespace GlossaryApp.Print
                    }
                    if ((b.Image != null && string.IsNullOrEmpty(b.Image.Trim())) || string.IsNullOrEmpty(b.Image))
                    {
-                       return a.AppendFormat(ssWithOutImage, WebUtility.HtmlDecode(b.Term),
-                           WebUtility.HtmlDecode(b.Definition));
+                       //return a.AppendFormat(ssWithOutImage, WebUtility.HtmlDecode(b.Term),
+                       //    WebUtility.HtmlDecode(b.Definition));
+                       return a.AppendFormat(ssWithOutImage, b.Term, b.Definition);
                    }
-                   return a.AppendFormat(ss, WebUtility.HtmlDecode(b.Term),
-                           WebUtility.HtmlDecode(b.Definition), WebUtility.HtmlDecode(b.Image),
-                           WebUtility.HtmlDecode(b.Alt_tag), WebUtility.HtmlDecode(b.Caption));
+                   //return a.AppendFormat(ss, WebUtility.HtmlDecode(b.Term.Trim()),
+                   //        WebUtility.HtmlDecode(b.Definition.Trim()), WebUtility.HtmlDecode(b.Image),
+                   //        WebUtility.HtmlDecode(b.Alt_tag), WebUtility.HtmlDecode(b.Caption.Trim()));
+                   return a.AppendFormat(ss, b.Term.Trim(), b.Definition.Trim(), b.Image, b.Alt_tag, b.Caption.Trim());
                });
             return output.ToString();
         }
@@ -186,7 +188,7 @@ namespace GlossaryApp.Print
                     a.Append(HandleFilterMenu("acronym-"));
                     a.Append("<div class='list-group'>");
                 }
-                return a.AppendFormat(ss, WebUtility.HtmlDecode(b.acronym), WebUtility.HtmlDecode(b.definition));
+                return a.AppendFormat(ss, b.acronym.Trim(), b.definition.Trim());
             });
 
             // return string.Format(outerString, output.ToString());
