@@ -143,14 +143,18 @@ namespace GlossaryApp.Print
             //var ss = @"<div class='card'><div class='card-content row'><div class='col-md-9' style='max-width: 700px;min-width: 700px;'><h4 class='media-heading'><span class='card-title'>{0}</span></h4><span>{1}</span></div><div class='media-right col-md-2'><div class='thumbnail' style='max-width: 200px;min-width: 200px;'><img style='width: 186px;' class='img-thumbnail' src='images/{2}' alt='{3}' /><small>{4}</small></div></div></div></div>";
             var ss = @"<div class='card'><div class='card-content row'><table style='width:100%'><tr><td style='width:80%;vertical-align: top;' ><div style='padding-left:15px;padding-right:10px;'><h4 class='media-heading'><span class='card-title'>{0}</span></h4><span>{1}</span></div></td><td align='right' style='width:20%'><div class='thumbnail' style='float:right;text-align:left;max-width: 200px;min-width: 200px;'><img style='width: 186px;' class='img-thumbnail' src='images/{2}' alt='{3}' /><small>{4}</small></div></td></tr></table></div></div>";
             var ssWithOutImage = @"<div class='card'><div class='card-content row'><div class='col-md-10'><h4 class='media-heading'><span class='card-title'>{0}</span></h4><span>{1}</span></div><div class='media-right col-md-2'></div></div></div>";
-            var currentChar = string.Empty;
+            var currentChar = '\n';
             var output = glossaryList.Aggregate(new StringBuilder("<h3>Glossary of Terminology</h3><hr/>"), (a, b) =>
                {
-                   if (!b.Term.Substring(0, 1).ToUpper().Equals(currentChar))
+                   if (!b.Term.ToUpper().FirstOrDefault().Equals(currentChar))
                    {
-                       currentChar = b.Term.Substring(0, 1).ToUpper();
-                       a.Append(GetAnchorNameTag("glossary-", currentChar));
-                       a.Append(HandleFilterMenu("glossary-"));
+                       currentChar = b.Term.ToUpper().FirstOrDefault();
+                       
+                       if (Char.IsLetter(currentChar))
+                       {
+                           a.Append(GetAnchorNameTag("glossary-", currentChar));
+                           a.Append(HandleFilterMenu("glossary-"));
+                       }
 
                    }
                    if ((b.Image != null && string.IsNullOrEmpty(b.Image.Trim())) || string.IsNullOrEmpty(b.Image))
@@ -169,7 +173,7 @@ namespace GlossaryApp.Print
 
         static string BuildAcronymString()
         {
-            var currentChar = string.Empty;
+            var currentChar = '\n';
             //var outerString = @"<div class='list-group'>{0}</div>";
             var ss = "<div class='list-group-item'><b>{0}</b> : {1}</div>";
             var initialString = new StringBuilder();
@@ -177,15 +181,19 @@ namespace GlossaryApp.Print
             //initialString.Append(HandleFilterMenu("acronym-"));
             var output = acronymList.Aggregate(initialString, (a, b) =>
             {
-                if (!b.acronym.Substring(0, 1).ToUpper().Equals(currentChar))
+                if (!b.acronym.ToUpper().FirstOrDefault().Equals(currentChar))
                 {
-                    currentChar = b.acronym.Substring(0, 1).ToUpper();
+                    currentChar = b.acronym.ToUpper().FirstOrDefault();
                     if (a.Length > 0)
                     {
                         a.Append("</div>");
                     }
-                    a.Append(GetAnchorNameTag("acronym-", currentChar));
-                    a.Append(HandleFilterMenu("acronym-"));
+                    
+                    if (Char.IsLetter(currentChar))
+                    {
+                        a.Append(GetAnchorNameTag("acronym-", currentChar));
+                        a.Append(HandleFilterMenu("acronym-"));
+                    }
                     a.Append("<div class='list-group'>");
                 }
                 return a.AppendFormat(ss, b.acronym.Trim(), b.definition.Trim());
@@ -205,9 +213,9 @@ namespace GlossaryApp.Print
             return "<div class='row'><div class='col-md-10 col-md-offset-2'>" + menu.ToString() + "</div></div>";
         }
 
-        static string GetAnchorNameTag(string type, string name)
+        static string GetAnchorNameTag(string type, char name)
         {
-            return string.Format("<a name='{0}'></a><br/>", type + name);
+            return string.Format("<a name='{0}'></a><br/>", type + name.ToString());
         }
     }
 }
